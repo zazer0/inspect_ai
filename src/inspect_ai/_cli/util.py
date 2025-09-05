@@ -9,8 +9,8 @@ from inspect_ai.util._sandbox.environment import SandboxEnvironmentSpec
 
 def int_or_bool_flag_callback(
     true_value: int, false_value: int = 0
-) -> Callable[[click.Context, click.Parameter, Any], int]:
-    def callback(ctx: click.Context, param: click.Parameter, value: Any) -> int:
+) -> Callable[[click.Context, click.Parameter, Any], int | None]:
+    def callback(ctx: click.Context, param: click.Parameter, value: Any) -> int | None:
         """Callback to parse the an option that can either be a boolean flag or integer.
 
         Desired behavior:
@@ -24,7 +24,7 @@ def int_or_bool_flag_callback(
         source = ctx.get_parameter_source(param.name) if param.name else ""
         if source == click.core.ParameterSource.DEFAULT:
             # Means the user did NOT specify the flag at all
-            return false_value
+            return None
 
         # 2. The user did specify the flag. If value is None,
         #    that means they used the flag with no argument, e.g. --my-flag
@@ -36,7 +36,7 @@ def int_or_bool_flag_callback(
         if lower_val in ("true", "yes", "1"):
             return true_value
         elif lower_val in ("false", "no", "0"):
-            return false_value
+            return None
         else:
             # 4. Otherwise, assume it is an integer
             try:
@@ -82,7 +82,7 @@ def int_bool_or_str_flag_callback(
         source = ctx.get_parameter_source(param.name) if param.name else ""
         if source == click.core.ParameterSource.DEFAULT:
             # Means the user did NOT specify the flag at all
-            return false_value
+            return None
 
         # 2. The user did specify the flag. If value is None,
         #    that means they used the flag with no argument, e.g. --my-flag
@@ -94,7 +94,7 @@ def int_bool_or_str_flag_callback(
         if lower_val in ("true", "yes", "1"):
             return true_value
         elif lower_val in ("false", "no", "0"):
-            return false_value
+            return None
         else:
             # 4. Try to parse as an integer
             try:
